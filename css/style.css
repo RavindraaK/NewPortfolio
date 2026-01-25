@@ -32,6 +32,10 @@
     --scroll-bar-color: #c5cadf;
     --scroll-thumb-color: #70768a;
     --scroll-thumb-hover-color: #454f6b;
+
+    /* PCB accent color — change these to tweak circuit trace/node colors */
+    --pcb-accent: var(--second-color);
+    --pcb-accent-rgb: 106, 89, 209; /* rgb for use in rgba() drop shadows */
 }
 
 .dark-theme {
@@ -55,6 +59,10 @@
     --scroll-bar-color: #c1ceff;
     --scroll-thumb-color: #282f4e;
     --scroll-thumb-hover-color: #454f6b;
+
+    /* slightly different PCB accent for dark theme (optional) */
+    --pcb-accent: #9fb7ff;
+    --pcb-accent-rgb: 159, 183, 255;
 }
 
 * {
@@ -301,12 +309,12 @@ header.sticky .nav-bar {
 
     21%,
     40% {
-        content: "Frontend Developer";
+        content: "Electrical design Engineer";
     }
 
     41%,
     60% {
-        content: "Java Full Stack";
+        content: "Embedded Engineer";
     }
 
     61%,
@@ -653,10 +661,19 @@ header.sticky .nav-bar {
     margin: 10px 0 22px;
 }
 
-.edu-list,
-.item:hover,
+/* Replace the incorrect selector and add consistent transitions & hover effects */
+.edu-list .item,
+.bar,
+.experience-card {
+    transition: transform .3s ease, box-shadow .3s ease;
+    transform-origin: center;
+}
+
+.edu-list .item:hover,
+.bar:hover,
 .experience-card:hover {
     transform: scale(1.03);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
 }
 
 /* Service section */
@@ -921,6 +938,29 @@ header.sticky .nav-bar {
 #myBtn:hover {
     background-color: #614fd0;
     /* Hover color */
+}
+
+/* hidden extra text for per-card read-more */
+.more {
+    display: none;
+}
+
+/* read-more buttons match existing button style */
+.read-more-btn {
+    background-color: #6a59d1;
+    color: white;
+    border: none;
+    padding: 6px 15px;
+    font-size: 13px;
+    margin: 10px 0 0;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: background-color 0.3s;
+    float: right;
+}
+
+.read-more-btn:hover {
+    background-color: #614fd0;
 }
 
 /* Get in touch */
@@ -1201,6 +1241,97 @@ footer a {
     margin-top: 50px;
 }
 
+/* Electronics / circuit decorative background (denser PCB style) */
+.ee-bg {
+    position: fixed;
+    inset: 0;
+    z-index: -1; /* behind content */
+    pointer-events: none;
+    opacity: 0.36; /* increased visibility */
+    transition: opacity .45s ease;
+}
+
+.ee-bg .ee-svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+/* traces */
+.ee-bg .trace,
+.ee-bg .wave {
+    fill: none;
+    stroke: var(--pcb-accent);
+    stroke-width: 1.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 10 10;
+    stroke-dashoffset: 0;
+    mix-blend-mode: screen;
+    filter: drop-shadow(0 0 10px rgba(var(--pcb-accent-rgb), 0.22));
+}
+
+/* two different speeds to create depth */
+.ee-bg .trace-a { animation: trace-move 4s linear infinite; stroke-dasharray: 8 8; }
+.ee-bg .trace-b { animation: trace-move 5.6s linear infinite; stroke-dasharray: 12 8; opacity: 0.95; }
+.ee-bg .trace-c { animation: trace-move 6.2s linear infinite; stroke-dasharray: 14 6; opacity: 0.85; }
+.ee-bg .trace-d { animation: trace-move 3.2s linear infinite reverse; stroke-dasharray: 6 6; opacity: 0.9; }
+.ee-bg .trace-e { animation: trace-move 5s linear infinite; opacity: 0.9; }
+.ee-bg .trace-f { animation: trace-move 7s linear infinite reverse; opacity: 0.85; }
+
+.ee-bg .wave {
+    stroke-width: 1.6;
+    stroke-dasharray: 16 8;
+    animation-duration: 8s;
+    opacity: 0.9;
+}
+
+/* pads / chip / pins */
+.ee-bg .pad { 
+	fill: var(--pcb-accent); 
+	opacity: 0.95; 
+	filter: drop-shadow(0 0 8px rgba(var(--pcb-accent-rgb), 0.22)); 
+}
+.ee-bg .chip { 
+	fill: rgba(14,36,49,0.08); 
+	stroke: var(--pcb-accent); 
+	stroke-width: .9; 
+	filter: drop-shadow(0 6px 18px rgba(0,0,0,0.06)); 
+}
+.ee-bg .pin { 
+	fill: var(--pcb-accent); 
+	opacity: .9; 
+}
+
+.ee-bg .via {
+	fill: var(--pcb-accent);
+	opacity: 0.98;
+	filter: drop-shadow(0 0 10px rgba(var(--pcb-accent-rgb), 0.22));
+	transform-origin: center;
+	animation: via-pulse 1.8s ease-in-out infinite;
+}
+
+/* darker theme subtle */
+.dark-theme .ee-bg { opacity: 0.28; }
+.dark-theme .ee-bg .trace,
+.dark-theme .ee-bg .via { filter: drop-shadow(0 0 6px rgba(106,89,209,0.08)); }
+
+/* animations */
+@keyframes trace-move {
+    to { stroke-dashoffset: -2000; }
+}
+@keyframes via-pulse {
+    0% { transform: scale(1); opacity: .95; }
+    50% { transform: scale(1.32); opacity: 1; }
+    100% { transform: scale(1); opacity: .95; }
+}
+
+/* On very small devices show a toned down background */
+@media (max-width: 420px) {
+    .ee-bg { opacity: 0.12; }
+    .ee-bg .trace { opacity: 0.5; }
+}
+
 @media screen and (max-width: 1070px) {
 
     /* header navigation */
@@ -1265,14 +1396,42 @@ footer a {
     }
 
     .nav-menu-btn {
-        background: url(assets\menu-bar-btn1.png)no-repeat;
+        /* keep defaults for desktop; visibility controlled by media query */
         filter: var(--color-filter);
+        background: url('assets/menu-bar-btn1.png') no-repeat center;
         background-size: 40px;
-        background-position: center;
         width: 40px;
         height: 40px;
         cursor: pointer;
+        z-index: 1000000; /* higher than theme/picker so it's visible */
+        display: none; /* visible when media query applies */
+        position: relative;
+    }
+
+    /* Small fallback hamburger glyph if image fails or is blocked */
+    .nav-menu-btn::after {
+        content: '\2630';
         display: block;
+        font-size: 20px;
+        color: var(--first-color);
+        text-align: center;
+        line-height: 40px;
+        opacity: 0.0; /* keep hidden when image loads */
+    }
+
+    /* When image is not loaded, show glyph (most browsers set background-image none, we detect via background-image none) */
+    @supports (background-image: none) {
+        .nav-menu-btn[style*="background-image: none"]::after { opacity: 1; }
+    }
+
+    /* show on small screens (existing @media block already sets display:block - update URL and ensure z-index preserved) */
+    @media screen and (max-width: 1070px) {
+        .nav-menu-btn {
+            display: block;
+            /* ensure path & sizing are consistent in this rule too */
+            background: url('assets/menu-bar-btn1.png') no-repeat center;
+            background-size: 40px;
+        }
     }
 
     /* Body */
@@ -1443,4 +1602,66 @@ footer a {
     .contact-card .contact-btn .btn {
         font-size: 0.8rem;
     }
+}
+
+/* PCB color picker UI */
+.pcb-color-controls {
+    position: fixed;
+    right: 0;
+    top: 170px; /* below theme button */
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    background: var(--transparent-color-01);
+    backdrop-filter: blur(10px);
+    padding: 6px;
+    border-radius: 8px 0 0 8px;
+    box-shadow: var(--box-shadow);
+    z-index: 999999;
+    pointer-events: auto;
+}
+
+.pcb-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+}
+
+.pcb-label input[type="color"] {
+    -webkit-appearance: none;
+    border: none;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    background: transparent;
+    cursor: pointer;
+}
+.pcb-label input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+.pcb-label input[type="color"]::-webkit-color-swatch { border: none; border-radius: 6px; }
+
+.pcb-indicator {
+    width: 10px;
+    height: 10px;
+    display: inline-block;
+    border-radius: 2px;
+    border: 1px solid rgba(255,255,255,0.06);
+    box-shadow: 0 0 6px rgba(0,0,0,0.12);
+}
+
+.pcb-reset-btn {
+    background: transparent;
+    border: 1px solid rgba(0,0,0,0.06);
+    color: var(--first-color);
+    padding: 6px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+}
+.pcb-reset-btn:hover { background: rgba(0,0,0,0.03); }
+
+/* keep compact on small screens */
+@media (max-width: 420px) {
+    .pcb-color-controls { top: 140px; padding: 4px; gap: 6px; }
+    .pcb-label input[type="color"] { width: 28px; height: 28px; }
 }

@@ -14,6 +14,48 @@
 
 <body>
 
+    <!-- decorative electronics background (non-interactive) -->
+    <div class="ee-bg" aria-hidden="true">
+        <!--
+            Dense PCB-style inline SVG.
+            If you prefer an external optimized SVG, replace this <svg> with:
+            <img src="assets/pcb-bg.svg" class="ee-svg" alt="" aria-hidden="true" />
+        -->
+        <svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" class="ee-svg" xmlns="http://www.w3.org/2000/svg" role="img" focusable="false">
+            <g class="traces">
+                <!-- left cluster -->
+                <path class="trace trace-a" d="M40 120 H220 V150 H380" />
+                <path class="trace trace-b" d="M40 160 H140 V220 H360" />
+                <rect class="pad" x="360" y="140" width="18" height="18" rx="3" ry="3" />
+                <!-- center bus -->
+                <path class="trace trace-c" d="M420 180 H580 V220 H840" />
+                <path class="trace trace-d" d="M520 90 V260 H740" />
+                <!-- IC area -->
+                <rect class="chip" x="760" y="240" width="160" height="100" rx="6" ry="6" />
+                <g class="pins">
+                    <rect class="pin" x="752" y="252" width="8" height="12" rx="2" />
+                    <rect class="pin" x="752" y="276" width="8" height="12" rx="2" />
+                    <rect class="pin" x="928" y="252" width="8" height="12" rx="2" />
+                    <rect class="pin" x="928" y="276" width="8" height="12" rx="2" />
+                </g>
+                <!-- right traces -->
+                <path class="trace trace-e" d="M940 260 H1100 V320 H1150" />
+                <path class="trace trace-f" d="M620 420 H920" />
+                <!-- bottom wave / bus -->
+                <path class="wave" d="M20 720 C200 660, 400 740, 600 720 C800 700, 1000 770, 1180 720" />
+            </g>
+
+            <!-- vias / nodes -->
+            <circle class="via" cx="40" cy="120" r="5" />
+            <circle class="via" cx="220" cy="150" r="4" />
+            <circle class="via" cx="380" cy="150" r="5" />
+            <circle class="via" cx="520" cy="180" r="4" />
+            <circle class="via" cx="760" cy="290" r="5" />
+            <circle class="via" cx="880" cy="320" r="4" />
+            <circle class="via" cx="1100" cy="320" r="5" />
+        </svg>
+    </div>
+
     <!-- Scroll to top button -->
 
     <div class="scrollToTop-btn flex-center">
@@ -25,6 +67,15 @@
     <div class="theme-btn flex-center">
         <i class="fas fa-moon"></i>
         <i class="fas fa-sun"></i>
+    </div>
+
+    <!-- PCB color picker (non-intrusive control) -->
+    <div class="pcb-color-controls" aria-hidden="false" title="Change PCB accent color">
+        <label class="pcb-label" for="pcbColor">
+            <input id="pcbColor" type="color" value="#6a59d1" aria-label="PCB color picker">
+            <span class="pcb-indicator" aria-hidden="true"></span>
+        </label>
+        <button class="pcb-reset-btn" type="button" aria-label="Reset PCB color">Reset</button>
     </div>
 
     <!-- header -->
@@ -43,7 +94,8 @@
                     <!-- <a href="#get-in-touch">Contact</a> -->
                 </div>
             </div>
-            <div class="nav-menu-btn"></div>
+            <!-- nav menu button -->
+            <div class="nav-menu-btn" role="button" aria-label="Open navigation menu" tabindex="0"></div>
         </div>
     </header>
 
@@ -55,17 +107,17 @@
                 <a href="https://github.com/RavindraaK"><i class="fab fa-github"></i></a>
             </div>
             <div class="info">
-                <h2>Hi, Their</h2>
+                <h2>Hi, There</h2>
                 <h3>I'm Ravindra</h3>
                 <div class="animation-text">
                     I'm a <span></span>
                 </div>
-                <p>To associate myself with an organization that gives me a chance to
-                    update my Knowledge. To discover newer areas and gain
-                    experience in working.E&TC graduate with
-                    implementation experience in Web Development
+                <p>Electronics and Communication Engineering graduate with internship experience in social device manufacturing and
+                    product development. Skilled in embedded systems, Arduino programming, and integrating hardware with software for
+                    practical applications.  Seeking full-time positions. To associate myself with an organization that gives me a chance to
+                    update my Knowledge. To discover newer areas and gain experience in working.
                 </p>
-                <a href="assets\Ravi_resume.pdf" class="btn">Resume <i class="fas fa-arrow-circle-right"></i></a>
+                <a href="assets\Resume 2025 L2.pdf" class="btn">Resume <i class="fas fa-arrow-circle-right"></i></a>
             </div>
             <div class="home-img">
                 <img src="assets/home5.png" alt="">
@@ -145,28 +197,28 @@
                         <ul class="bars">
                             <li class="bar">
                                 <div class="info">
-                                    <span>Java / Adv. Java / Hibernate / Servlet</span>
+                                    <span>Zuken Software / Siemens NX </span>
 
                                 </div>
                                 <div class="line java"></div>
                             </li>
                             <li class="bar">
                                 <div class="info">
-                                    <span>OOP's</span>
+                                    <span>EDM / Oracle Agile Software</span>
 
                                 </div>
                                 <div class="line mysql"></div>
                             </li>
                             <li class="bar">
                                 <div class="info">
-                                    <span>MYSQL</span>
+                                    <span>OOP's / MYSQL</span>
 
                                 </div>
                                 <div class="line mysql"></div>
                             </li>
                             <li class="bar">
                                 <div class="info">
-                                    <span>HTML5 / CSS / JavaScript</span>
+                                    <span>Java / Adv. Java / Hibernate / Servlet</span>
 
                                 </div>
                                 <div class="line html"></div>
@@ -188,21 +240,55 @@
 
                     <div class="experience-card">
                         <div class="upper">
-                            <h3>JR. Developer</h3>
+                            <h3>JR. Developer | STSARC </h3>
                             <h5>Internship | Remote</h5>
                             <span>5 months</span>
                         </div>
                         <div class="hr"></div>
                         <h4><label>What I learned</label></h4>
                         <p>I worked under the guidance of senior developer to check & fix the bugs and to
-                            improve existing code.<span id="dots">...</span><span id="more">
-                            I also conducted debugging to identify and fix errors or issues in the code.
-                            Learnt HTML,CSS,JS for hosting the websites CORE FTP LE. After that I also worked
-                            on WordPress Software.
-                            Designed intuitive graphical user interfaces to improve user experience.
-                            Translated customer requirements into written use cases.    
-                        </p>
-                        <button onclick="myFunction()" id="myBtn">Read more</button>
+                            improve existing code.<span class="dots">...</span><span class="more"> I also conducted debugging to identify and fix errors or issues in the code. Learnt HTML,CSS,JS for hosting the websites CORE FTP LE. After that I also worked on WordPress Software. Designed intuitive graphical user interfaces to improve user experience. Translated customer requirements into written use cases.</span></p>
+                        <button class="read-more-btn">Read more</button>
+                    </div>
+
+                    <!-- New experience card 1 -->
+                    <div class="experience-card">
+                        <div class="upper">
+                            <h3>GAT | JCB</h3>
+                            <h5>Internship | Onsite</h5>
+                            <span>1 Year</span>
+                        </div>
+                        <div class="hr"></div>
+                        <h4><label>What I learned</label></h4>
+                        <p>Developed a script in Zuken to automatically identify old and new connectors based on version control, which
+                           streamlined the design review process.
+                            <span class="dots">...</span><span class="more"> 
+                           Gained hands-on knowledge of both electrical and non-electrical components
+                            Acquired practical experience with industry tools such as Zuken for electrical design and Teamcenter for product
+                            lifecycle management. Wiring harness design and development
+                            Electrical schematic design (using tools like Zuken E3.series).Connector and terminal selection
+                            Assist with 2d schematic and 3d harness routing.
+                            BOM (Bill of Materials) creation and verification. Harness drawing and 2D/3D layout interpretation.</span></p>
+                        <button class="read-more-btn">Read more</button>
+                    </div>
+
+                    <!-- New experience card 2 -->
+                    <div class="experience-card">
+                        <div class="upper">
+                            <h3>Electrical Design Engineer | Hyster-Yale Material Handling</h3>
+                            <h5>Full-time | Onsite</h5>
+                            <span>Ongoing</span>
+                        </div>
+                        <div class="hr"></div>
+                        <h4><label>What I learned</label></h4>
+                        <p>Working on both electrical and non-electrical components
+                            Acquired practical experience with industry 
+                            BOM (Bill of Materials) creation and verification. Harness drawing and 2D/3D layout interpretation <span class="dots">...</span><span class="more"> 
+                            tools such as Zuken for electrical design and Teamcenter for product
+                            lifecycle management. Wiring harness design and development
+                            Electrical schematic design (using tools like Zuken E3.series).Connector and terminal selection
+                            Assist with 2d schematic and 3d harness routing.</span></p>
+                        <button class="read-more-btn">Read more</button>
                     </div>
 
                 </div>

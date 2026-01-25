@@ -54,7 +54,6 @@ projectsCloseBtns.forEach((projectsCloseBtn) => {
 });
 
 //   website dark/light theme
-
 const themeBtn = document.querySelector(".theme-btn");
 
 themeBtn.addEventListener("click", () => {
@@ -62,20 +61,21 @@ themeBtn.addEventListener("click", () => {
     themeBtn.classList.toggle("sun");
 
     localStorage.setItem("saved-theme", getCurrentTheme());
-    localStorage.setItem("saved-icon", getCurrentTheme());
+    localStorage.setItem("saved-icon", getCurrentIcon());
 });
 
 const getCurrentTheme = () => document.body.classList.contains("dark-theme") ? "dark" : "light";
-const getCurrentIcon = () => document.classList.contains("sun") ? "sun" : "moon";
+const getCurrentIcon = () => themeBtn.classList.contains("sun") ? "sun" : "moon";
 
 const savedTheme = localStorage.getItem("saved-theme");
 const savedIcon = localStorage.getItem("saved-icon");
 
-if(savedTheme){
+if (savedTheme) {
     document.body.classList[savedTheme === "dark" ? "add" : "remove"]("dark-theme");
-    themeBtn.classList[savedIcon === "moon" ? "add" : "remove"]("sun");
 }
-
+if (savedIcon) {
+    themeBtn.classList[savedIcon === "sun" ? "add" : "remove"]("sun");
+}
 
 // scroll to top button
 
@@ -91,21 +91,21 @@ scrollTopBtn.addEventListener("click", () => {
 });
 
 // navigation menu items active on page scroll
-
 window.addEventListener("scroll", () => {
     const sections = document.querySelectorAll("section");
-    const scrollY = window.pageYOffset;  
+    const scrollY = window.pageYOffset;
 
     sections.forEach(current => {
         let sectionHeight = current.offsetHeight;
         let sectionTop = current.offsetTop - 50;
         let ids = current.getAttribute("id");
 
-        if(scrollY > sectionTop && scrollY <= sectionTop + sectionHeight){
-            document.querySelector(".nav-items a[href*=" + ids + "]").classList.add("active");
-        }
-        else{
-            document.querySelector(".nav-items a[href*=" + ids + "]").classList.remove("active");
+        if (scrollY > sectionTop && scrollY <= sectionTop + sectionHeight) {
+            const activeLink = document.querySelector(".nav-items a[href*='" + ids + "']");
+            if (activeLink) activeLink.classList.add("active");
+        } else {
+            const activeLink = document.querySelector(".nav-items a[href*='" + ids + "']");
+            if (activeLink) activeLink.classList.remove("active");
         }
     });
 });
@@ -152,30 +152,143 @@ ScrollReveal({
  ScrollReveal().reveal('footer .group', {delay: 500, origin: 'top', interval: 200 }); 
 
 
-//  multiple text effect 
+//  multiple text effect (guard in case Typed.js isn't yet loaded)
+if (typeof Typed !== 'undefined') {
+    const typed = new Typed('.multiple-text', {
+        strings: ['Frontend Developer', 'Software Engineer', 'Editor', 'Chess player'],
+        typeSpeed: 100,
+        backSpeed: 100,
+        backDelay: 1000,
+        loop: true
+    });
+} else {
+    // Typed not available — don't throw, continue script execution
+    console.warn('Typed.js not available — skipping multiple-text initialization.');
+}
 
-const typed = new Typed('.multiple-text', {
-    strings: ['Frontend Developer', 'Software Engineer', 'Editor', 'Chess player'],
-    typeSpeed :100,
-    backSpeed :100,
-    backDelay :1000,
-    loop : true
+// Read More (per experience card) — collapse other cards first, toggle only clicked card
+document.querySelectorAll('.read-more-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const card = btn.closest('.experience-card');
+        if (!card) return;
+
+        // Collapse all other cards
+        document.querySelectorAll('.experience-card').forEach(otherCard => {
+            if (otherCard === card) return;
+            const otherDots = otherCard.querySelector('.dots');
+            const otherMore = otherCard.querySelector('.more');
+            const otherBtn = otherCard.querySelector('.read-more-btn');
+
+            if (otherDots) otherDots.style.display = 'inline';
+            if (otherMore) otherMore.style.display = 'none';
+            if (otherBtn) otherBtn.innerText = 'Read more';
+        });
+
+        // Toggle the clicked card
+        const dots = card.querySelector('.dots');
+        const more = card.querySelector('.more');
+
+        if (!dots || !more) return;
+
+        if (dots.style.display === 'none') {
+            dots.style.display = 'inline';
+            btn.innerText = 'Read more';
+            more.style.display = 'none';
+        } else {
+            dots.style.display = 'none';
+            btn.innerText = 'Read less';
+            more.style.display = 'inline';
+        }
+    });
 });
 
-// Read More
+/* PCB color picker logic */
+(function () {
+    const colorInput = document.getElementById('pcbColor');
+    const resetBtn = document.querySelector('.pcb-reset-btn');
+    const indicator = document.querySelector('.pcb-indicator');
+    const root = document.documentElement;
+    const LS_KEY = 'pcb-accent';
 
-function myFunction() {
-    var dots = document.getElementById("dots");
-    var moreText = document.getElementById("more");
-    var btnText = document.getElementById("myBtn");
-  
-    if (dots.style.display === "none") {
-      dots.style.display = "inline";
-      btnText.innerHTML = "Read more";
-      moreText.style.display = "none";
-    } else {
-      dots.style.display = "none";
-      btnText.innerHTML = "Read less";
-      moreText.style.display = "inline";
+    // fallback defaults
+    const DEFAULT_HEX = '#6a59d1';
+
+    function hexToRgb(hex) {
+        hex = hex.replace('#', '');
+        if (hex.length === 3) hex = hex.split('').map(h => h + h).join('');
+        const num = parseInt(hex, 16);
+        return [(num >> 16) & 255, (num >> 8) & 255, num & 255];
     }
-  }
+
+    function setPcbColor(hex) {
+        if (!hex) return;
+        root.style.setProperty('--pcb-accent', hex);
+        const [r, g, b] = hexToRgb(hex);
+        root.style.setProperty('--pcb-accent-rgb', `${r}, ${g}, ${b}`);
+        if (indicator) indicator.style.background = hex;
+        if (colorInput) colorInput.value = hex;
+        localStorage.setItem(LS_KEY, hex);
+    }
+
+    // init from storage -> css var, then update UI
+    try {
+        const saved = localStorage.getItem(LS_KEY);
+        const computed = getComputedStyle(root).getPropertyValue('--pcb-accent').trim() || '';
+        const initial = saved || computed || DEFAULT_HEX;
+        setPcbColor(initial);
+    } catch (e) {
+        setPcbColor(DEFAULT_HEX);
+    }
+
+    if (colorInput) {
+        colorInput.addEventListener('input', (e) => setPcbColor(e.target.value));
+    }
+
+    if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+            localStorage.removeItem(LS_KEY);
+            setPcbColor(DEFAULT_HEX);
+        });
+    }
+})();
+
+/* Open Gmail compose (uses mailto: href if present) */
+;(function () {
+	const emailLink = document.getElementById('emailLink');
+	if (!emailLink) return;
+
+	const fallbackMail = 'mailto:4500ravindra@gmail.com';
+
+	function openGmailCompose(href) {
+		let target = href;
+		if (href && href.startsWith('mailto:')) {
+			const mail = href.slice(7);
+			const [addr, q] = mail.split('?');
+			const params = new URLSearchParams(q || '');
+			const to = addr || '';
+			const subject = params.get('subject') || '';
+			const body = params.get('body') || '';
+			target = 'https://mail.google.com/mail/?view=cm&fs=1'
+				+ (to ? '&to=' + encodeURIComponent(to) : '')
+				+ (subject ? '&su=' + encodeURIComponent(subject) : '')
+				+ (body ? '&body=' + encodeURIComponent(body) : '');
+		}
+		// open compose in new tab (user can sign in to Gmail if needed)
+		window.open(target, '_blank');
+	}
+
+	emailLink.addEventListener('click', (e) => {
+		if (e && typeof e.preventDefault === 'function') e.preventDefault();
+		const mailHref = emailLink.getAttribute('href') || fallbackMail;
+		openGmailCompose(mailHref);
+	});
+
+	// keyboard activation (Enter / Space)
+	emailLink.addEventListener('keydown', (e) => {
+		if (e.key === 'Enter' || e.key === ' ') {
+			e.preventDefault();
+			const mailHref = emailLink.getAttribute('href') || fallbackMail;
+			openGmailCompose(mailHref);
+		}
+	});
+})();
